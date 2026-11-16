@@ -68,3 +68,18 @@ cargo test -p craft-fonts --features embed   # the embedded bytes match the file
 ```
 
 Code is MIT OR Apache-2.0 (`LICENSE-MIT`, `LICENSE-APACHE`); each font keeps its own licence.
+
+---
+
+## Phiên bản Tiếng Việt (Craft Fonts VN — `dinhsonconstruction/craft-fonts-vn`)
+
+Kho này là bản fork tối ưu tiếng Việt của [`storytold/craft-fonts`](https://github.com/storytold/craft-fonts) trên nhánh mặc định `vn-edition`, dùng chung cho bộ **Craft Apps VN** (`gridcraft-vn`, `wordcraft-vn`, `pdfcraft-vn`, `cadcraft-vn`, `deckcraft-vn`).
+
+### Font tiếng Việt bổ sung (SIL OFL 1.1)
+
+| Family | Styles | Tương thích | Giấy phép |
+|---|---|---|---|
+| Liberation Serif | Regular, Bold, Italic, Bold Italic | Tương thích kích thước 1:1 với **Times New Roman** (văn bản hành chính NĐ 30/2020/NĐ-CP) | OFL-1.1 |
+| Liberation Sans | Regular, Bold, Italic, Bold Italic | Tương thích kích thước 1:1 với **Arial** (bảng tính, slide, CAD, biểu mẫu PDF) | OFL-1.1 |
+
+Toàn bộ 8 mặt chữ Liberation (2.1.5) phủ đủ 134 ký tự tiếng Việt có dấu (NFC & NFD) và ký hiệu `₫`. Khi build bất kỳ ứng dụng `*-vn` nào với `CRAFT_FONTS_DIR=/đường/dẫn/tới/craft-fonts` và `CRAFT_FONTS_REQUIRED=1`, ứng dụng sẽ tự động nhúng sẵn bộ font này để hiển thị và xuất PDF chuẩn tiếng Việt kể cả trên máy chưa cài Microsoft Core Fonts.

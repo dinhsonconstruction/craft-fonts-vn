@@ -906,3 +906,47 @@ fn bytes_from_entry(e: &Entry) -> Vec<u8> {
     std::fs::read(craft_fonts_tests::repo_root().join(&e.file))
         .unwrap_or_else(|err| panic!("{}: {err}", e.file))
 }
+
+/// Liberation Serif and Liberation Sans (SIL OFL 1.1, metric-compatible with Times New Roman and
+/// Arial) must ship all four regular/bold/italic faces and cover every precomposed Vietnamese letter,
+/// combining tone mark and currency sign `₫` (`vn-edition`).
+#[test]
+fn liberation_fonts_cover_full_vietnamese_alphabet_and_marks() {
+    const VIETNAMESE_PRECOMPOSED: &str = concat!(
+        "ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúý",
+        "ĂăĐđĨĩŨũƠơƯư",
+        "ẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặ",
+        "ẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊị",
+        "ỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợ",
+        "ỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹ",
+    );
+    const COMBINING_MARKS: [char; 5] = ['\u{0300}', '\u{0301}', '\u{0303}', '\u{0309}', '\u{0323}'];
+
+    assert_eq!(VIETNAMESE_PRECOMPOSED.chars().count(), 134);
+
+    for family in ["Liberation Serif", "Liberation Sans"] {
+        let faces: Vec<&Font> = FONTS.iter().filter(|f| f.family == family).collect();
+        assert_eq!(
+            faces.len(),
+            4,
+            "{family}: expected 4 manifest styles, found {}",
+            faces.len()
+        );
+        for style in ["Regular", "Bold", "Italic", "Bold Italic"] {
+            let f = faces
+                .iter()
+                .copied()
+                .find(|f| f.style == style)
+                .unwrap_or_else(|| panic!("{family}: missing style {style}"));
+            let data = bytes(f);
+            let font = FontRef::new(&data).unwrap_or_else(|e| panic!("{}: {e}", f.file));
+            for c in VIETNAMESE_PRECOMPOSED
+                .chars()
+                .chain(COMBINING_MARKS)
+                .chain(['₫'])
+            {
+                assert_glyph_outline(&font, f.file, c);
+            }
+        }
+    }
+}
